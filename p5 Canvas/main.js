@@ -1,5 +1,22 @@
 const canvas = document.getElementById("game");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
+
+const mainAreaWidth = 400;
+const mainAreaHeight = 400;
+let horizontalPadding = (window.innerWidth - mainAreaWidth) / 2;
+let verticalPadding = (window.innerHeight - mainAreaHeight) / 2;
+//Funcion que dibuja todo en la ventana
+function draw(){
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    ctx.save();
+    ctx.translate(horizontalPadding, verticalPadding + mainAreaHeight);
+    //dibujamos globo
+    drawBallon();
+    ctx.restore();
+}
+draw();
 
 //Función que dibuja el globo
 function drawBallon(){
@@ -33,6 +50,15 @@ function drawBallon(){
 //Generamos datos de los árboles y los almacenamos en una matriz
 let trees = [];
 function generateTree() {
+    const minGap = 50; //Distancia minima entre 2 arboles
+    const maxGap = 600; //Distancia maxima entre 2 arboles
+    
+    const x = trees.length
+        ? trees[trees.lenght -1].x +
+            minGap +
+            Math.floor(Math.random() * (maxGap - minGap))
+        : 400;    
+
     const h = 60 + Math.random() * 80; //altura
 
     const r1 = 32 + Math.random() * 16; //radios
@@ -55,6 +81,9 @@ generateTree();
 //Función que dibuja los árboles
 function drawTrees(){
     trees.forEach(({hh, r1, r2, r3, r4, r5, r6, r7, color}) => {
+        ctx.save();
+        ctx.translate(x,0);
+        
         //Tronco
         const TrunkWidth = 40;
         ctx.fillStyle = "#885F37";
@@ -75,6 +104,8 @@ function drawTrees(){
         drawCircle(20, -h - 35, r5);
         drawCircle(30, -h - 25, r6);
         drawCircle(20, -h - 15, r7);
+
+        ctx.restore();
     });
 }
 
