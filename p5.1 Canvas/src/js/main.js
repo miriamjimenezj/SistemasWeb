@@ -10,6 +10,15 @@ let obstacles;
 let gameSpeed;
 let keys = {};
 
+//EventListeners
+document.addEventListener('keydown', function (evt) {
+    keys[evt.code] = true;
+  });
+  document.addEventListener('keyup', function (evt) {
+    keys[evt.code] = false;
+  });
+
+
 //Jugador
 class Player {
     constructor (x, y, w, h, c) {
@@ -20,11 +29,39 @@ class Player {
         this.c = c; //color
     
         this.dy = 0; //velocidad de salto
-        this.jumpForce = 15; //fuerza de salto
+        this.jumpForce = 20; //fuerza de salto
         this.originalHeight = h;
+        this.grounded = false;
+    }
+    // Animacion
+    Animate(){
+        //Saltar
+        if(keys['Space']){
+            this.Jump();
+        }
+
+        this.y += this.dy;
+        
+        // Gravedad
+        if(this.y +  this.h < canvas.height){
+            this.dy += gravity;
+            this.grounded = false;
+        }else{
+            this.dy = 0;
+            this.grounded = true;
+            this.y = canvas.height - this.h;
+        }
+        this.Draw();
     }
 
-    draw() {
+    Jump(){
+        if(this.grounded){
+            this.dy = -this.jumpForce;
+        }
+    }
+
+    // Dibujar jugador 
+    Draw() {
         ctx.beginPath();
         ctx.fillStyle = this.c;
         ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -51,7 +88,6 @@ function Start () {
     requestAnimationFrame(Update);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-    player.draw();
-    player.x++;
+    player.Animate();
   }
   Start();
