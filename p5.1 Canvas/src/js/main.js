@@ -42,8 +42,16 @@ function Start () {
     score = 0;
     highscore = 0;
 
-    player = new Player(25, 0, 50, 50, '#FF5858');
-    player.draw();
+    player = new Player(25, canvas.height -150, 50, 50, '#FF5858');
+    
+    requestAnimationFrame(Update);
   }
 
+  function Update () {
+    requestAnimationFrame(Update);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+    player.draw();
+    player.x++;
+  }
   Start();
