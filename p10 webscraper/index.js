@@ -9,27 +9,37 @@ const options = {
     path: '/',
     method: 'GET'
 };
-// HTML de amazon en un intervalo de tiempo
+
+let prices = '';
+
+// Precios productos de amazon en un intervalo de tiempo
 setInterval(() => {
     const req = https.request(options, res => {
-        console.log(`statusCode: ${res.statusCode}`);
-        res.on('data', d => {
-            process.stdout.write(d);
+        let data = '';
+        res.on('data', chunk => {
+            data += chunk;
+        });
+        res.on('end', () => {
+            const $ = cheerio.load(data);
+            $('span.a-offscreen').each((i, element) => {
+                prices += $(element).text() + '\n';
+                console.log(prices);
+                console.log("----------------");
+            });
         });
     });
     req.on('error', error => {console.error(error);})
     req.end();
-}, 60);
+}, 1000);
 
 // Servidor
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/html');
-    res.end('<h1>Hello, World!</h1>');
+    res.setHeader('Content-Type', 'text/plain');
+    res.end(prices);
 });
 
 server.listen(port, () => {
     console.log(`Server running at port ${port}`);
 });
-
 
