@@ -1,8 +1,27 @@
 const http = require('http');
+const https = require('https');
+const cheerio = require('cheerio');
 
 const port = 3000;
-const url = "https://es.shein.com/"; //URL de la pagina que queremos analizar
+const options = {
+    hostname: 'www.amazon.es',
+    port: 443,
+    path: '/',
+    method: 'GET'
+};
+// HTML de amazon en un intervalo de tiempo
+setInterval(() => {
+    const req = https.request(options, res => {
+        console.log(`statusCode: ${res.statusCode}`);
+        res.on('data', d => {
+            process.stdout.write(d);
+        });
+    });
+    req.on('error', error => {console.error(error);})
+    req.end();
+}, 60);
 
+// Servidor
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
@@ -13,20 +32,4 @@ server.listen(port, () => {
     console.log(`Server running at port ${port}`);
 });
 
-/*
-const https = require('https');
-const options = {
-    hostname: 'www.google.com',
-    port: 443,
-    path: '/',
-    method: 'GET'
-};
-const req = https.request(options, res => {
-    console.log(`statusCode: ${res.statusCode}`);
-    res.on('data', d => {
-    process.stdout.write(d);
-    });
-});
-req.on('error', error => {console.error(error);})
-req.end();
-*/
+
